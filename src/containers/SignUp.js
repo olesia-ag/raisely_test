@@ -10,10 +10,13 @@ export default function SignUp() {
 	const [email, setEmail] = useState({ value: '', exist: false });
 	const [emailHelper, setEmailHelper] = useState('');
 	const [password, setPassword] = useState('');
-	const [passwordHelper, setPasswordHelper] = useState('');
+  const [passwordHelper, setPasswordHelper] = useState('');
+  const [error, setError] = useState('')
+  const [status, setStatus] = useState(null)
 
 	const onChange = event => {
-		let valid;
+    let valid;
+    setError('')
 		switch (event.target.id) {
 			case 'email':
 				setEmail({ ...email, value: event.target.value });
@@ -27,10 +30,8 @@ export default function SignUp() {
 				}
 				break;
 			case 'firstName':
-				console.log('first name:', event.target.value);
 				setFirstName(event.target.value);
 				valid = /^[a-zA-Z]+$/.test(event.target.value);
-				console.log('valid:', valid);
 				if (!valid) {
 					setFirstNameHelper('First name can only contain letters');
 				} else if (event.target.value.length < 2) {
@@ -44,7 +45,6 @@ export default function SignUp() {
 				}
 				break;
 			case 'lastName':
-          console.log('last name:', event.target.value);
 				setLastName(event.target.value);
 				valid = /^[a-zA-Z]+$/.test(event.target.value);
 				if (!valid) {
@@ -74,42 +74,25 @@ export default function SignUp() {
 				break;
 		}
 	};
-	const confirmSignUp = data => {
-		let obj = {
-			campaignUuid: '46aa3270-d2ee-11ea-a9f0-e9a68ccff42a',
-			data: data
-		};
-		axios.post('https://api.raisely.com/v3/signup', obj).then(res => {});
-	};
-	const validateEmail = email => {
-		axios.post('https://api.raisely.com/v3/check-user', email).then(res => {});
-	};
-
-	const changeEmail = value => {
-		const newEmail = { ...email, value: value };
-		console.log(newEmail);
-		setEmail(newEmail);
-	};
 
 	//if the user stopped typing in an email field for 0.5 sec, send a request to check:
 	useEffect(() => {
 		const timer = setTimeout(() => {
-			if (emailHelper.length !== 0) {
+			if (emailHelper.length === 0 && email.value.length !== 0) {
 				axios
 					.post('https://api.raisely.com/v3/check-user', {
 						campaignUuid: '46aa3270-d2ee-11ea-a9f0-e9a68ccff42a',
-						data: { email: 'test@test.com' }
+						data: { email: email.value }
 					})
 					.then(res => {
-						// if (res.data.data.status === 'EXISTS' && !email.exist) {
-						// 	setEmail({ ...email, exist: true });
-						// } else if (res.data.data.status === 'OK' && email.exist) {
-						// 	setEmail({ ...email, exist: false });
-						// }
-						console.log('just loggin for');
+						if (res.data.data.status === 'EXISTS' && !email.exist) {
+							setEmail({ ...email, exist: true });
+						} else if (res.data.data.status === 'OK' && email.exist) {
+							setEmail({ ...email, exist: false });
+						}
 					});
 			}
-		}, 500);
+		}, 600);
 		//this function will run before same useEffect runs again
 		//(if the effect runs once ([]) the cleanup function will only run when component unmounted
 		return () => {
@@ -117,12 +100,34 @@ export default function SignUp() {
 		};
 	}, [email.value, emailHelper]);
 
-	useEffect(() => console.log(email), [email]);
+	const onSubmit = event => {
+		event.preventDefault();
+		let obj = {
+			campaignUuid: '46aa3270-d2ee-11ea-a9f0-e9a68ccff42a',
+			data: {
+				firstName: firstName,
+				lastName: lastName,
+				email: email.value,
+				password: password
+			}
+		};
+
+		axios
+			.post('https://api.raisely.com/v3/signup', obj)
+			.then(res => {
+        if(res.status === 200)
+        setStatus(res.data.message)
+        else{
+          setError('Oops! Something went wrong')
+        }
+      })
+			.catch(err => {
+        setError(err.response.data.errors[0].message)
+      });
+	};
 	return (
 		<>
 			<FormSide
-				validateEmail={validateEmail}
-				signUp={confirmSignUp}
 				firstName={firstName}
 				setFirstName={event => onChange(event)}
 				firstNameHelper={firstNameHelper}
@@ -135,6 +140,9 @@ export default function SignUp() {
 				password={password}
 				setPassword={event => onChange(event)}
 				passwordHelper={passwordHelper}
+        onSubmit={event => onSubmit(event)}
+        errorMessage = {error}
+        successStatus = {status}
 			/>
 		</>
 	);

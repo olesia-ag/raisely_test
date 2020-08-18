@@ -1,6 +1,16 @@
 Using the front-end framework of your choice, create a basic signup form that asks for a user’s first name, last name, email address and password. Your form should make a POST request to https://api.raisely.com/v3/signup with a JSON payload, with the following shape:
 
 { "campaignUuid": "46aa3270-d2ee-11ea-a9f0-e9a68ccff42a", "data": { "firstName": "the user's first name", "lastName": "the user's last name", "email": "the user's email address", "password": "the user's password" } }
+{"campaignUuid":"46aa3270-d2ee-11ea-a9f0-e9a68ccff42a","data":{"firstName":"Olesia","lastName":"Guidi","email":"olgarbuzova@gmail.com","password":"fghjkllk"}}
+{
+"campaignUuid": "46aa3270-d2ee-11ea-a9f0-e9a68ccff42a",
+"data": {
+"firstName": "Olesia",
+"lastName": "Guidi",
+"email": "olesiaguidi@gmail.com",
+"password": "12345678"
+}
+}
 You'll also need to asynchronously validate the email address. If you make a POST request to https://api.raisely.com/v3/check-user with the body
 
 { "campaignUuid": "46aa3270-d2ee-11ea-a9f0-e9a68ccff42a", "data": { "email": "the user's email address", } }
