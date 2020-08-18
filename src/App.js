@@ -1,15 +1,14 @@
 import React from 'react';
-import logo from './logo.svg';
+import FormSide from './components/FormSide'
+
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-
-      </header>
-    </div>
-  );
+	return (
+		<>
+			<FormSide/>
+		</>
+	);
 }
 
 export default App;
