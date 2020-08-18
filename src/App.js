@@ -1,12 +1,11 @@
 import React from 'react';
-import FormSide from './components/FormSide'
-
 import './App.css';
+import SignUp from './containers/SignUp';
 
 function App() {
 	return (
 		<>
-			<FormSide/>
+			<SignUp/>
 		</>
 	);
 }
