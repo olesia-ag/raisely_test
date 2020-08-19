@@ -7,7 +7,7 @@ export default function SignUp() {
 	const [firstNameHelper, setFirstNameHelper] = useState('');
 	const [lastName, setLastName] = useState('');
 	const [lastNameHelper, setLastNameHelper] = useState('');
-	const [email, setEmail] = useState({ value: '', exist: false });
+	const [email, setEmail] = useState('');
 	const [emailHelper, setEmailHelper] = useState('');
 	const [password, setPassword] = useState('');
   const [passwordHelper, setPasswordHelper] = useState('');
@@ -19,7 +19,7 @@ export default function SignUp() {
     setError('')
 		switch (event.target.id) {
 			case 'email':
-				setEmail({ ...email, value: event.target.value });
+				setEmail(event.target.value);
 				valid = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
 					event.target.value
 				);
@@ -78,17 +78,16 @@ export default function SignUp() {
 	//if the user stopped typing in an email field for 0.5 sec, send a request to check:
 	useEffect(() => {
 		const timer = setTimeout(() => {
-			if (emailHelper.length === 0 && email.value.length !== 0) {
+			if (emailHelper.length === 0 && email.length !== 0) {
+        console.log('went here')
 				axios
 					.post('https://api.raisely.com/v3/check-user', {
 						campaignUuid: '46aa3270-d2ee-11ea-a9f0-e9a68ccff42a',
-						data: { email: email.value }
+						data: { email: email }
 					})
 					.then(res => {
-						if (res.data.data.status === 'EXISTS' && !email.exist) {
-							setEmail({ ...email, exist: true });
-						} else if (res.data.data.status === 'OK' && email.exist) {
-							setEmail({ ...email, exist: false });
+						if (res.data.data.status === 'EXISTS') {
+							setEmailHelper('Oops! this email already exists in our system');
 						}
 					});
 			}
@@ -98,7 +97,7 @@ export default function SignUp() {
 		return () => {
 			clearTimeout(timer);
 		};
-	}, [email.value, emailHelper]);
+	}, [emailHelper, email]);
 
 	const onSubmit = event => {
 		event.preventDefault();
@@ -107,7 +106,7 @@ export default function SignUp() {
 			data: {
 				firstName: firstName,
 				lastName: lastName,
-				email: email.value,
+				email: email,
 				password: password
 			}
 		};

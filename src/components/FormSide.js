@@ -3,7 +3,6 @@ import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -74,12 +73,11 @@ export default function FormSide(props) {
 	let displayForm;
 	if (props.successStatus) {
 		displayForm = (
-      <div className={classes.paper}><Typography variant='button'>{props.successStatus}</Typography></div>
+      <Typography variant='button'>{props.successStatus}</Typography>
 		);
 	} else {
 		displayForm = (
-    <div className={classes.paper}>
-      <Typography component='h1' variant='h5'>
+    <><Typography component='h1' variant='h5'>
 						Sign up
 					</Typography>
 			<form className={classes.form} noValidate>
@@ -123,13 +121,9 @@ export default function FormSide(props) {
 					name='email'
 					autoComplete='email'
 					autoFocus
-					error={props.email.exist || props.emailHelper.length !== 0}
-					helperText={
-						props.email.exist
-							? 'Oops! This email is already in our system'
-							: props.emailHelper
-					}
-					value={props.email.value}
+					error={props.emailHelper.length !== 0}
+					helperText={props.emailHelper}
+					value={props.email}
 					onChange={props.setEmail}
 				/>
 				<TextField
@@ -149,16 +143,19 @@ export default function FormSide(props) {
 				/>
 				{displayButton}
 			</form>
-      </div>
-		);
-	}
+      </>
+    )
+    }
+
 	return (
 		<Grid container component='main' className={classes.root}>
 			<CssBaseline />
 			<Grid item xs={false} sm={4} md={7} className={classes.image} />
 			<Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+      <div className={classes.paper}>
           {displayForm}
+      </div>
 			</Grid>
-		</Grid>
-	);
+    </Grid>
+    );
 }
