@@ -79,7 +79,6 @@ export default function SignUp() {
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			if (emailHelper.length === 0 && email.length !== 0) {
-        console.log('went here')
 				axios
 					.post('https://api.raisely.com/v3/check-user', {
 						campaignUuid: '46aa3270-d2ee-11ea-a9f0-e9a68ccff42a',
